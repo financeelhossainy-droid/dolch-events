@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>الحجوزات</title>
+    <style>
+        body { font-family: Arial; margin: 30px; direction: rtl; background: #f8f8f8; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: right; }
+        th { background: #0f5b78; color: white; }
+        a.btn {
+            display: inline-block; padding: 10px 16px; background: #0f5b78; color: white;
+            text-decoration: none; border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>الحجوزات</h1>
+        <a class="btn" href="{% url 'booking_create' %}">إضافة حجز جديد</a>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>رقم</th>
+                    <th>العميل</th>
+                    <th>القاعة</th>
+                    <th>المناسبة</th>
+                    <th>تاريخ المناسبة</th>
+                    <th>الإجمالي</th>
+                    <th>التفاصيل</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.id }}</td>
+                    <td>{{ booking.client.name }}</td>
+                    <td>{{ booking.hall }}</td>
+                    <td>{{ booking.occasion_type }}</td>
+                    <td>{{ booking.occasion_date }}</td>
+                    <td>{{ booking.total_price }}</td>
+                    <td><a href="{% url 'booking_detail' booking.id %}">فتح</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">لا توجد حجوزات بعد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تفاصيل الحجز</title>
+    <style>
+        body { font-family: Arial; margin: 30px; direction: rtl; background: #f8f8f8; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+        .box { border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: right; }
+        th { background: #0f5b78; color: white; }
+        input, select, textarea {
+            width: 100%; padding: 10px; margin-top: 5px;
+            border: 1px solid #ccc; border-radius: 6px;
+        }
+        button, .btn {
+            background: #0f5b78; color: white; border: none;
+            padding: 10px 16px; border-radius: 6px; cursor: pointer;
+            text-decoration: none; display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تفاصيل الحجز رقم {{ booking.id }}</h1>
+
+        <div class="box">
+            <p><strong>العميل:</strong> {{ booking.client.name }}</p>
+            <p><strong>الهاتف:</strong> {{ booking.client.phone }}</p>
+            <p><strong>القاعة:</strong> {{ booking.hall }}</p>
+            <p><strong>نوع المناسبة:</strong> {{ booking.occasion_type }}</p>
+            <p><strong>المدة:</strong> {{ booking.get_duration_type_display }}</p>
+            <p><strong>تاريخ الحجز:</strong> {{ booking.booking_date }}</p>
+            <p><strong>تاريخ المناسبة:</strong> {{ booking.occasion_date }}</p>
+            <p><strong>سعر القاعة:</strong> {{ booking.hall_price }}</p>
+            <p><strong>إجمالي الخدمات:</strong> {{ booking.services_total }}</p>
+            <p><strong>الإجمالي:</strong> {{ booking.total_price }}</p>
+            <p><strong>المدفوع:</strong> {{ booking.amount_paid }}</p>
+            <p><strong>المتبقي:</strong> {{ booking.remaining_amount }}</p>
+            <p><strong>مقدم الحجز:</strong> {{ booking.deposit_amount }}</p>
+            <a class="btn" href="{% url 'booking_pdf' booking.id %}" target="_blank">عرض نسخة الطباعة</a>
+        </div>
+
+        <div class="box">
+            <h3>الخدمات المضافة</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>الخدمة</th>
+                        <th>سعر الوحدة</th>
+                        <th>الكمية</th>
+                        <th>الإجمالي</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in services %}
+                    <tr>
+                        <td>{{ item.service }}</td>
+                        <td>{{ item.unit_price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.line_total }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">لا توجد خدمات مضافة</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="box">
+            <h3>إضافة خدمة</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ service_form.as_p }}
+                <button type="submit">إضافة الخدمة</button>
+            </form>
+        </div>
+
+        <a href="{% url 'booking_list' %}">رجوع للحجوزات</a>
+    </div>
+</body>
+</html>

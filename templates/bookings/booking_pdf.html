@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>بيان حجز</title>
+    <style>
+        body { font-family: Arial; direction: rtl; margin: 40px; }
+        h1, h2, h3, p { text-align: right; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #000; padding: 8px; text-align: right; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+    <h1>Dolch Event</h1>
+    <h2>بيان حجز قاعة</h2>
+
+    <p><strong>رقم الحجز:</strong> {{ booking.id }}</p>
+    <p><strong>اسم العميل:</strong> {{ booking.client.name }}</p>
+    <p><strong>رقم الهاتف:</strong> {{ booking.client.phone }}</p>
+    <p><strong>القاعة:</strong> {{ booking.hall }}</p>
+    <p><strong>نوع المناسبة:</strong> {{ booking.occasion_type }}</p>
+    <p><strong>المدة:</strong> {{ booking.get_duration_type_display }}</p>
+    <p><strong>تاريخ الحجز:</strong> {{ booking.booking_date }}</p>
+    <p><strong>تاريخ المناسبة:</strong> {{ booking.occasion_date }}</p>
+
+    <h3>الخدمات</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>الخدمة</th>
+                <th>سعر الوحدة</th>
+                <th>الكمية</th>
+                <th>الإجمالي</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in services %}
+            <tr>
+                <td>{{ item.service }}</td>
+                <td>{{ item.unit_price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.line_total }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">لا توجد خدمات</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>الملخص المالي</h3>
+    <table>
+        <tr>
+            <th>سعر القاعة</th>
+            <td>{{ booking.hall_price }}</td>
+        </tr>
+        <tr>
+            <th>إجمالي الخدمات</th>
+            <td>{{ booking.services_total }}</td>
+        </tr>
+        <tr>
+            <th>الإجمالي</th>
+            <td>{{ booking.total_price }}</td>
+        </tr>
+        <tr>
+            <th>المدفوع</th>
+            <td>{{ booking.amount_paid }}</td>
+        </tr>
+        <tr>
+            <th>المتبقي</th>
+            <td>{{ booking.remaining_amount }}</td>
+        </tr>
+        <tr>
+            <th>مقدم الحجز</th>
+            <td>{{ booking.deposit_amount }}</td>
+        </tr>
+    </table>
+
+    <h3>شروط الحجز</h3>
+    <p>مقدم الحجز 25% بحد أدنى 3000 جنيه.</p>
+    <p>يتم سداد كامل المبلغ قبل المناسبة بـ 7 أيام.</p>
+    <p>في حالة الإلغاء قبل أكثر من 30 يوم يتم خصم 500 جنيه.</p>
+    <p>في حالة الإلغاء أقل من 30 يوم يتم خصم 25% من قيمة الحجز.</p>
+    <p>في حالة الإلغاء من 15 يوم فأقل يتم خصم 50% من قيمة الحجز.</p>
+    <p>في حالة الإلغاء من أسبوع فأقل يتم خصم 100% من قيمة الحجز.</p>
+</body>
+</html>

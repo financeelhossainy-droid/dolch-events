@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        body { font-family: Arial; margin: 30px; direction: rtl; background: #f8f8f8; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+        form p { margin-bottom: 15px; }
+        input, select, textarea {
+            width: 100%; padding: 10px; margin-top: 5px;
+            border: 1px solid #ccc; border-radius: 6px;
+        }
+        button {
+            background: #0f5b78; color: white; border: none;
+            padding: 12px 20px; border-radius: 6px; cursor: pointer;
+        }
+        a { text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ title }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">حفظ الحجز</button>
+        </form>
+        <br>
+        <a href="{% url 'booking_list' %}">رجوع</a>
+    </div>
+</body>
+</html>
