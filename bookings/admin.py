@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.urls import reverse
 from django.utils.html import format_html
 from .models import Client, Booking, BookingService
 
@@ -43,6 +44,7 @@ class BookingAdmin(admin.ModelAdmin):
         "groom_national_id",
         "bride_name",
         "bride_national_id",
+        "bride_address",
     )
     readonly_fields = (
         "hall_price",
@@ -127,19 +129,21 @@ class BookingAdmin(admin.ModelAdmin):
 
     @admin.display(description="طباعة")
     def print_pdf(self, obj):
+        url = reverse("booking_pdf", args=[obj.pk])
         return format_html(
-            '<a class="button" target="_blank" href="/bookings/booking/{}/pdf/">📄 طباعة</a>',
-            obj.id
+            '<a class="button" target="_blank" href="{}">طباعة</a>',
+            url,
         )
 
     @admin.display(description="طباعة العقد")
     def print_pdf_link(self, obj):
         if obj.pk:
+            url = reverse("booking_pdf", args=[obj.pk])
             return format_html(
                 '<a class="button" target="_blank" '
                 'style="padding:8px 12px;background:#0f5b78;color:white;border-radius:6px;text-decoration:none;" '
-                'href="/bookings/booking/{}/pdf/">📄 فتح ملف PDF</a>',
-                obj.id
+                'href="{}">فتح ملف PDF</a>',
+                url,
             )
         return "احفظ الحجز أولًا لتفعيل الطباعة"
 

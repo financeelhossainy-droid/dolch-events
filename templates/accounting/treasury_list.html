@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}الخزينة | Dolch ERP{% endblock %}
+
+{% block topbar_actions %}
+<a class="btn secondary" href="/admin/accounting/cashtransaction/">إدارة حركات الخزينة</a>
+{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <div class="panel-header">
+        <h2>الخزائن</h2>
+        <a class="btn gold" href="/admin/accounting/treasury/add/">إضافة خزينة</a>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>الخزينة</th>
+                    <th>الحساب</th>
+                    <th>رصيد افتتاحي</th>
+                    <th>الرصيد الحالي</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for treasury in treasuries %}
+                <tr>
+                    <td>{{ treasury.name }}</td>
+                    <td>{{ treasury.account }}</td>
+                    <td>{{ treasury.opening_balance|floatformat:2 }} جنيه</td>
+                    <td>{{ treasury.current_balance|floatformat:2 }} جنيه</td>
+                    <td>{% if treasury.is_active %}<span class="badge confirmed">مفعلة</span>{% else %}<span class="badge cancelled">متوقفة</span>{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">لا توجد خزائن بعد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="panel" style="margin-top: 18px;">
+    <div class="panel-header">
+        <h2>آخر حركات الخزينة</h2>
+        <a class="btn gold" href="/admin/accounting/cashtransaction/add/">إضافة حركة</a>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>التاريخ</th>
+                    <th>الخزينة</th>
+                    <th>النوع</th>
+                    <th>المبلغ</th>
+                    <th>الحساب المقابل</th>
+                    <th>البيان</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.transaction_date|date:"d / m / Y" }}</td>
+                    <td>{{ transaction.treasury }}</td>
+                    <td>{{ transaction.get_transaction_type_display }}</td>
+                    <td>{{ transaction.amount|floatformat:2 }} جنيه</td>
+                    <td>{{ transaction.account }}</td>
+                    <td>{{ transaction.description }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">لا توجد حركات خزينة بعد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ module.title }} | Dolch Events{% endblock %}
+
+{% block topbar_actions %}
+<a class="btn secondary" href="{% url 'booking_list' %}">لوحة الحجوزات</a>
+{% endblock %}
+
+{% block content %}
+<section class="module-hero">
+    <div>
+        <h2>{{ module.title }}</h2>
+        <p>{{ module.subtitle }}</p>
+    </div>
+</section>
+
+<div class="module-grid">
+    {% for title, description, route_name in module.items %}
+    <article class="module-card">
+        <div>
+            <h3>{{ title }}</h3>
+            <p>{{ description }}</p>
+        </div>
+        {% if route_name %}
+            <a class="btn secondary" href="{% url route_name %}">فتح</a>
+        {% else %}
+            <span class="module-status">قيد التجهيز</span>
+        {% endif %}
+    </article>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}قيود اليومية | Dolch ERP{% endblock %}
+
+{% block topbar_actions %}
+<a class="btn secondary" href="/admin/accounting/journalentry/">إدارة القيود</a>
+{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <div class="panel-header">
+        <h2>قيود اليومية</h2>
+        <a class="btn gold" href="/admin/accounting/journalentry/add/">إضافة قيد</a>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>رقم</th>
+                    <th>التاريخ</th>
+                    <th>المرجع</th>
+                    <th>البيان</th>
+                    <th>مدين</th>
+                    <th>دائن</th>
+                    <th>التوازن</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>#{{ entry.id }}</td>
+                    <td>{{ entry.entry_date|date:"d / m / Y" }}</td>
+                    <td>{{ entry.reference|default:"-" }}</td>
+                    <td>{{ entry.description }}</td>
+                    <td>{{ entry.total_debit|floatformat:2 }} جنيه</td>
+                    <td>{{ entry.total_credit|floatformat:2 }} جنيه</td>
+                    <td>{% if entry.is_balanced %}<span class="badge confirmed">متوازن</span>{% else %}<span class="badge cancelled">غير متوازن</span>{% endif %}</td>
+                    <td>{{ entry.get_status_display }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">لا توجد قيود بعد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

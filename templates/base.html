@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dolch Events{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/erp.css' %}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true">D</div>
+                <div>
+                    <strong>Dolch ERP</strong>
+                    <span>Systems • Applications • Products</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu" aria-label="القائمة الرئيسية">
+                <a href="{% url 'booking_list' %}" class="nav-link">لوحة الحجوزات</a>
+                <a href="{% url 'booking_create' %}" class="nav-link">حجز جديد</a>
+                <a href="{% url 'module_hub' %}" class="nav-link">مركز الموديولز</a>
+                <a href="{% url 'accounting_module' %}" class="nav-link">الحسابات</a>
+                <a href="{% url 'master_data' %}" class="nav-link">Master Data</a>
+                <a href="{% url 'accounting_determination_list' %}" class="nav-link">Accounting Determination</a>
+                <a href="{% url 'calendar_module' %}" class="nav-link">الكاليندر</a>
+                <a href="{% url 'purchases_module' %}" class="nav-link">المشتريات</a>
+                <a href="{% url 'inventory_module' %}" class="nav-link">المخازن</a>
+                <a href="{% url 'costing_module' %}" class="nav-link">التكاليف</a>
+                <a href="{% url 'reports_module' %}" class="nav-link">التقارير</a>
+            </nav>
+
+            <div class="sidebar-section">
+                <span class="section-title">إعدادات متقدمة</span>
+                <a href="/admin/">Django Admin</a>
+                <span>إدارة الجداول الخام والصلاحيات</span>
+            </div>
+        </aside>
+
+        <main class="main-panel">
+            <header class="topbar">
+                <div>
+                    <span class="eyebrow">Dolch Events ERP</span>
+                    <h1>{% block page_heading %}{{ page_title|default:"لوحة التحكم" }}{% endblock %}</h1>
+                </div>
+                <div class="topbar-actions">
+                    {% block topbar_actions %}{% endblock %}
+                </div>
+            </header>
+
+            <section class="content-area">
+                {% block content %}{% endblock %}
+            </section>
+        </main>
+    </div>
+</body>
+</html>

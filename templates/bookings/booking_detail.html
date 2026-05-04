@@ -1,85 +1,107 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>تفاصيل الحجز</title>
-    <style>
-        body { font-family: Arial; margin: 30px; direction: rtl; background: #f8f8f8; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
-        .box { border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: right; }
-        th { background: #0f5b78; color: white; }
-        input, select, textarea {
-            width: 100%; padding: 10px; margin-top: 5px;
-            border: 1px solid #ccc; border-radius: 6px;
-        }
-        button, .btn {
-            background: #0f5b78; color: white; border: none;
-            padding: 10px 16px; border-radius: 6px; cursor: pointer;
-            text-decoration: none; display: inline-block;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>تفاصيل الحجز رقم {{ booking.id }}</h1>
+{% extends "base.html" %}
 
-        <div class="box">
-            <p><strong>العميل:</strong> {{ booking.client.name }}</p>
-            <p><strong>الهاتف:</strong> {{ booking.client.phone }}</p>
-            <p><strong>القاعة:</strong> {{ booking.hall }}</p>
-            <p><strong>نوع المناسبة:</strong> {{ booking.occasion_type }}</p>
-            <p><strong>المدة:</strong> {{ booking.get_duration_type_display }}</p>
-            <p><strong>تاريخ الحجز:</strong> {{ booking.booking_date }}</p>
-            <p><strong>تاريخ المناسبة:</strong> {{ booking.occasion_date }}</p>
-            <p><strong>سعر القاعة:</strong> {{ booking.hall_price }}</p>
-            <p><strong>إجمالي الخدمات:</strong> {{ booking.services_total }}</p>
-            <p><strong>الإجمالي:</strong> {{ booking.total_price }}</p>
-            <p><strong>المدفوع:</strong> {{ booking.amount_paid }}</p>
-            <p><strong>المتبقي:</strong> {{ booking.remaining_amount }}</p>
-            <p><strong>مقدم الحجز:</strong> {{ booking.deposit_amount }}</p>
-            <a class="btn" href="{% url 'booking_pdf' booking.id %}" target="_blank">عرض نسخة الطباعة</a>
+{% block title %}تفاصيل الحجز #{{ booking.id }} | Dolch Events{% endblock %}
+
+{% block topbar_actions %}
+<div class="actions">
+    <a class="btn secondary" href="{% url 'booking_list' %}">رجوع</a>
+    <a class="btn gold" href="{% url 'booking_pdf' booking.id %}" target="_blank">طباعة عقد</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="finance-strip">
+    <div class="finance-item">
+        <span>سعر القاعة</span>
+        <strong>{{ booking.hall_price|floatformat:2 }} جنيه</strong>
+    </div>
+    <div class="finance-item">
+        <span>إجمالي الخدمات</span>
+        <strong>{{ booking.services_total|floatformat:2 }} جنيه</strong>
+    </div>
+    <div class="finance-item">
+        <span>إجمالي العقد</span>
+        <strong>{{ booking.total_price|floatformat:2 }} جنيه</strong>
+    </div>
+    <div class="finance-item">
+        <span>المتبقي</span>
+        <strong>{{ booking.remaining_amount|floatformat:2 }} جنيه</strong>
+    </div>
+</div>
+
+<div class="detail-grid" style="margin-top: 18px;">
+    <section class="panel detail-section">
+        <h2>بيانات العميل والحجز</h2>
+        <div class="field-pair"><span>العميل</span><strong>{{ booking.client.name }}</strong></div>
+        <div class="field-pair"><span>الهاتف</span><strong>{{ booking.client.phone }}</strong></div>
+        <div class="field-pair"><span>القاعة</span><strong>{{ booking.hall }}</strong></div>
+        <div class="field-pair"><span>نوع المناسبة</span><strong>{{ booking.occasion_type }}</strong></div>
+        <div class="field-pair"><span>المدة</span><strong>{{ booking.get_duration_type_display }}</strong></div>
+        <div class="field-pair"><span>الحالة</span><strong class="status-{{ booking.status }}">{{ booking.get_status_display }}</strong></div>
+        <div class="field-pair"><span>تاريخ الحجز</span><strong>{{ booking.booking_date|date:"d / m / Y" }}</strong></div>
+        <div class="field-pair"><span>تاريخ المناسبة</span><strong>{{ booking.occasion_date|date:"d / m / Y" }}</strong></div>
+    </section>
+
+    <section class="panel detail-section">
+        <h2>بيانات المناسبة</h2>
+        <div class="field-pair"><span>اسم العريس / صاحب المناسبة</span><strong>{{ booking.groom_name|default:"-" }}</strong></div>
+        <div class="field-pair"><span>الرقم القومي</span><strong>{{ booking.groom_national_id|default:"-" }}</strong></div>
+        <div class="field-pair"><span>العنوان</span><strong>{{ booking.groom_address|default:"-" }}</strong></div>
+        <div class="field-pair"><span>اسم العروسة</span><strong>{{ booking.bride_name|default:"-" }}</strong></div>
+        <div class="field-pair"><span>الرقم القومي للعروسة</span><strong>{{ booking.bride_national_id|default:"-" }}</strong></div>
+        <div class="field-pair"><span>عنوان العروسة</span><strong>{{ booking.bride_address|default:"-" }}</strong></div>
+    </section>
+
+    <section class="panel detail-section full">
+        <div class="panel-header" style="padding: 0 0 14px; border-bottom: 0;">
+            <h2>الخدمات المضافة</h2>
         </div>
-
-        <div class="box">
-            <h3>الخدمات المضافة</h3>
-            <table>
+        <div class="table-scroll">
+            <table class="data-table">
                 <thead>
                     <tr>
                         <th>الخدمة</th>
                         <th>سعر الوحدة</th>
                         <th>الكمية</th>
                         <th>الإجمالي</th>
+                        <th>ملاحظة</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in services %}
                     <tr>
                         <td>{{ item.service }}</td>
-                        <td>{{ item.unit_price }}</td>
+                        <td>{{ item.unit_price|floatformat:2 }} جنيه</td>
                         <td>{{ item.quantity }}</td>
-                        <td>{{ item.line_total }}</td>
+                        <td>{{ item.line_total|floatformat:2 }} جنيه</td>
+                        <td>{{ item.notes|default:"-" }}</td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4">لا توجد خدمات مضافة</td>
+                        <td colspan="5">لا توجد خدمات مضافة</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+    </section>
 
-        <div class="box">
-            <h3>إضافة خدمة</h3>
-            <form method="post">
-                {% csrf_token %}
-                {{ service_form.as_p }}
-                <button type="submit">إضافة الخدمة</button>
-            </form>
-        </div>
+    <section class="panel detail-section">
+        <h2>إضافة خدمة</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% include "bookings/partials/form_field.html" with field=service_form.service %}
+            {% include "bookings/partials/form_field.html" with field=service_form.quantity %}
+            {% include "bookings/partials/form_field.html" with field=service_form.notes %}
+            <button type="submit">إضافة الخدمة</button>
+        </form>
+    </section>
 
-        <a href="{% url 'booking_list' %}">رجوع للحجوزات</a>
-    </div>
-</body>
-</html>
+    <section class="panel detail-section">
+        <h2>البيانات المالية</h2>
+        <div class="field-pair"><span>المدفوع</span><strong>{{ booking.amount_paid|floatformat:2 }} جنيه</strong></div>
+        <div class="field-pair"><span>مقدم الحجز المطلوب</span><strong>{{ booking.deposit_amount|floatformat:2 }} جنيه</strong></div>
+        <div class="field-pair"><span>ملاحظات</span><strong>{{ booking.notes|default:"-" }}</strong></div>
+    </section>
+</div>
+{% endblock %}

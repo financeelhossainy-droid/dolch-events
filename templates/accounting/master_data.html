@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Master Data | Dolch ERP{% endblock %}
+
+{% block topbar_actions %}
+<a class="btn secondary" href="{% url 'accounting_module' %}">رجوع للحسابات</a>
+{% endblock %}
+
+{% block content %}
+<section class="module-hero">
+    <div>
+        <h2>Master Data</h2>
+        <p>إعداد البيانات الأساسية التي تعتمد عليها الحجوزات والحسابات والمخازن والتقارير.</p>
+    </div>
+</section>
+
+<div class="module-grid">
+    {% for title, description, url in cards %}
+    <article class="module-card">
+        <div>
+            <h3>{{ title }}</h3>
+            <p>{{ description }}</p>
+        </div>
+        <a class="btn secondary" href="{{ url }}">فتح</a>
+    </article>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,55 +1,79 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>الحجوزات</title>
-    <style>
-        body { font-family: Arial; margin: 30px; direction: rtl; background: #f8f8f8; }
-        .container { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: right; }
-        th { background: #0f5b78; color: white; }
-        a.btn {
-            display: inline-block; padding: 10px 16px; background: #0f5b78; color: white;
-            text-decoration: none; border-radius: 6px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>الحجوزات</h1>
-        <a class="btn" href="{% url 'booking_create' %}">إضافة حجز جديد</a>
+{% extends "base.html" %}
 
-        <table>
+{% block title %}لوحة الحجوزات | Dolch Events{% endblock %}
+
+{% block topbar_actions %}
+<a class="btn gold" href="{% url 'booking_create' %}">حجز جديد</a>
+{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <span>عدد الحجوزات</span>
+        <strong>{{ stats.bookings_count }}</strong>
+    </div>
+    <div class="stat-card">
+        <span>حجوزات مؤكدة</span>
+        <strong>{{ stats.confirmed_count }}</strong>
+    </div>
+    <div class="stat-card">
+        <span>إجمالي الإيرادات</span>
+        <strong>{{ stats.revenue|floatformat:2 }} جنيه</strong>
+    </div>
+    <div class="stat-card">
+        <span>المتبقي للتحصيل</span>
+        <strong>{{ stats.remaining|floatformat:2 }} جنيه</strong>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>جدول الحجوزات</h2>
+        <a class="btn secondary" href="/admin/bookings/booking/">فتح في admin</a>
+    </div>
+
+    <div class="table-scroll">
+        <table class="data-table">
             <thead>
                 <tr>
                     <th>رقم</th>
                     <th>العميل</th>
+                    <th>الهاتف</th>
                     <th>القاعة</th>
                     <th>المناسبة</th>
                     <th>تاريخ المناسبة</th>
+                    <th>الحالة</th>
                     <th>الإجمالي</th>
-                    <th>التفاصيل</th>
+                    <th>المتبقي</th>
+                    <th>إجراءات</th>
                 </tr>
             </thead>
             <tbody>
                 {% for booking in bookings %}
                 <tr>
-                    <td>{{ booking.id }}</td>
+                    <td>#{{ booking.id }}</td>
                     <td>{{ booking.client.name }}</td>
+                    <td>{{ booking.client.phone }}</td>
                     <td>{{ booking.hall }}</td>
                     <td>{{ booking.occasion_type }}</td>
-                    <td>{{ booking.occasion_date }}</td>
-                    <td>{{ booking.total_price }}</td>
-                    <td><a href="{% url 'booking_detail' booking.id %}">فتح</a></td>
+                    <td>{{ booking.occasion_date|date:"d / m / Y" }}</td>
+                    <td><span class="badge {{ booking.status }}">{{ booking.get_status_display }}</span></td>
+                    <td>{{ booking.total_price|floatformat:2 }} جنيه</td>
+                    <td>{{ booking.remaining_amount|floatformat:2 }} جنيه</td>
+                    <td>
+                        <div class="actions">
+                            <a class="btn secondary" href="{% url 'booking_detail' booking.id %}">تفاصيل</a>
+                            <a class="btn" href="{% url 'booking_pdf' booking.id %}" target="_blank">طباعة عقد</a>
+                        </div>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7">لا توجد حجوزات بعد</td>
+                    <td colspan="10">لا توجد حجوزات بعد</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

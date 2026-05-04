@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Accounting Determination | Dolch ERP{% endblock %}
+
+{% block topbar_actions %}
+<a class="btn gold" href="/admin/accounting/accountingdetermination/add/">إضافة تحديد محاسبي</a>
+{% endblock %}
+
+{% block content %}
+<section class="module-hero">
+    <div>
+        <h2>Accounting Determination</h2>
+        <p>هنا يتم تحديد الحسابات الافتراضية التي سيستخدمها النظام لاحقًا عند إنشاء قيود تلقائية من الحجوزات والخزينة والمشتريات.</p>
+    </div>
+</section>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>تحديد الحسابات الافتراضية</h2>
+        <a class="btn secondary" href="/admin/accounting/accountingdetermination/">إدارة من Django Admin</a>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>الحدث</th>
+                    <th>حساب المدين</th>
+                    <th>حساب الدائن</th>
+                    <th>الحالة</th>
+                    <th>ملاحظات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in determinations %}
+                <tr>
+                    <td>{{ item.get_event_type_display }}</td>
+                    <td>{{ item.debit_account }}</td>
+                    <td>{{ item.credit_account }}</td>
+                    <td>{% if item.is_active %}<span class="badge confirmed">مفعل</span>{% else %}<span class="badge cancelled">متوقف</span>{% endif %}</td>
+                    <td>{{ item.notes|default:"-" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">لم يتم إعداد Accounting Determination بعد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

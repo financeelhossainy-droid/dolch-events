@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}الموردون | Dolch ERP{% endblock %}
+
+{% block topbar_actions %}
+<a class="btn secondary" href="/admin/accounting/supplier/">إدارة الموردين</a>
+{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <div class="panel-header">
+        <h2>الموردون</h2>
+        <a class="btn gold" href="/admin/accounting/supplier/add/">إضافة مورد</a>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>المورد</th>
+                    <th>الهاتف</th>
+                    <th>الحساب</th>
+                    <th>الحالة</th>
+                    <th>ملاحظات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for supplier in suppliers %}
+                <tr>
+                    <td>{{ supplier.name }}</td>
+                    <td>{{ supplier.phone|default:"-" }}</td>
+                    <td>{{ supplier.account|default:"-" }}</td>
+                    <td>{% if supplier.is_active %}<span class="badge confirmed">مفعل</span>{% else %}<span class="badge cancelled">متوقف</span>{% endif %}</td>
+                    <td>{{ supplier.notes|default:"-" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">لا يوجد موردون بعد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

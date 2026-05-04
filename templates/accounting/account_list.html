@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}شجرة الحسابات | Dolch ERP{% endblock %}
+
+{% block topbar_actions %}
+<a class="btn secondary" href="/admin/accounting/account/">إدارة الحسابات</a>
+{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <span>عدد الحسابات</span>
+        <strong>{{ stats.total }}</strong>
+    </div>
+    <div class="stat-card">
+        <span>مصدر الشجرة</span>
+        <strong>COA.xlsx</strong>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>شجرة الحسابات</h2>
+        <a class="btn gold" href="/admin/accounting/account/add/">إضافة حساب</a>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>الكود</th>
+                    <th>الحساب الفرعي</th>
+                    <th>Sub Account</th>
+                    <th>الحساب الرئيسي</th>
+                    <th>Main Account</th>
+                    <th>النوع</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                <tr>
+                    <td>{{ account.code }}</td>
+                    <td>{{ account.name_ar }}</td>
+                    <td>{{ account.name_en|default:"-" }}</td>
+                    <td>{{ account.main_account_ar|default:"-" }}</td>
+                    <td>{{ account.main_account_en|default:"-" }}</td>
+                    <td>{{ account.get_account_type_display }}</td>
+                    <td>{% if account.is_active %}<span class="badge confirmed">مفعل</span>{% else %}<span class="badge cancelled">متوقف</span>{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">لم يتم استيراد شجرة الحسابات بعد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,33 +1,145 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-    <style>
-        body { font-family: Arial; margin: 30px; direction: rtl; background: #f8f8f8; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
-        form p { margin-bottom: 15px; }
-        input, select, textarea {
-            width: 100%; padding: 10px; margin-top: 5px;
-            border: 1px solid #ccc; border-radius: 6px;
-        }
-        button {
-            background: #0f5b78; color: white; border: none;
-            padding: 12px 20px; border-radius: 6px; cursor: pointer;
-        }
-        a { text-decoration: none; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>{{ title }}</h1>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">حفظ الحجز</button>
-        </form>
-        <br>
-        <a href="{% url 'booking_list' %}">رجوع</a>
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Dolch Events{% endblock %}
+
+{% block topbar_actions %}
+<a class="btn secondary" href="{% url 'booking_list' %}">رجوع للحجوزات</a>
+{% endblock %}
+
+{% block content %}
+<form method="post" class="panel" id="booking-form">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="form-grid">
+        <section class="form-section">
+            <h2>بيانات العميل</h2>
+            {% include "bookings/partials/form_field.html" with field=form.client %}
+        </section>
+
+        <section class="form-section">
+            <h2>بيانات الحجز</h2>
+            {% include "bookings/partials/form_field.html" with field=form.hall %}
+            {% include "bookings/partials/form_field.html" with field=form.occasion_type %}
+            {% include "bookings/partials/form_field.html" with field=form.duration_type %}
+            {% include "bookings/partials/form_field.html" with field=form.booking_date %}
+            {% include "bookings/partials/form_field.html" with field=form.occasion_date %}
+        </section>
+
+        <section class="form-section full">
+            <h2 id="occasion-section-title">بيانات المناسبة</h2>
+            <div class="form-grid">
+                <div class="field-group">
+                    <label for="{{ form.groom_name.id_for_label }}" data-dynamic-label="primary_name">{{ form.groom_name.label }}</label>
+                    {{ form.groom_name }}
+                    {{ form.groom_name.errors }}
+                </div>
+                <div class="field-group">
+                    <label for="{{ form.groom_national_id.id_for_label }}" data-dynamic-label="primary_id">{{ form.groom_national_id.label }}</label>
+                    {{ form.groom_national_id }}
+                    {{ form.groom_national_id.errors }}
+                </div>
+                <div class="field-group">
+                    <label for="{{ form.groom_address.id_for_label }}" data-dynamic-label="primary_address">{{ form.groom_address.label }}</label>
+                    {{ form.groom_address }}
+                    {{ form.groom_address.errors }}
+                </div>
+                <div class="field-group wedding-only">
+                    <label for="{{ form.bride_name.id_for_label }}">{{ form.bride_name.label }}</label>
+                    {{ form.bride_name }}
+                    {{ form.bride_name.errors }}
+                </div>
+                <div class="field-group wedding-only">
+                    <label for="{{ form.bride_national_id.id_for_label }}">{{ form.bride_national_id.label }}</label>
+                    {{ form.bride_national_id }}
+                    {{ form.bride_national_id.errors }}
+                </div>
+                <div class="field-group wedding-only">
+                    <label for="{{ form.bride_address.id_for_label }}">{{ form.bride_address.label }}</label>
+                    {{ form.bride_address }}
+                    {{ form.bride_address.errors }}
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2>البيانات المالية</h2>
+            {% include "bookings/partials/form_field.html" with field=form.amount_paid %}
+        </section>
+
+        <section class="form-section">
+            <h2>ملاحظات</h2>
+            {% include "bookings/partials/form_field.html" with field=form.notes %}
+        </section>
     </div>
-</body>
-</html>
+
+    <div class="panel-header">
+        <div></div>
+        <div class="actions">
+            <a class="btn secondary" href="{% url 'booking_list' %}">إلغاء</a>
+            <button type="submit">حفظ الحجز</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    (function () {
+        const occasionSelect = document.getElementById("id_occasion_type");
+        const weddingOnly = document.querySelectorAll(".wedding-only");
+        const title = document.getElementById("occasion-section-title");
+        const labels = {
+            primaryName: document.querySelector('[data-dynamic-label="primary_name"]'),
+            primaryId: document.querySelector('[data-dynamic-label="primary_id"]'),
+            primaryAddress: document.querySelector('[data-dynamic-label="primary_address"]')
+        };
+        const titles = {
+            wedding: "بيانات العريس والعروسة",
+            contract: "بيانات العريس والعروسة",
+            condolence: "بيانات العزاء",
+            aqeeqa: "بيانات العقيقة",
+            meeting: "بيانات الاجتماع"
+        };
+
+        function selectedCode() {
+            if (!occasionSelect) return "other";
+            const option = occasionSelect.options[occasionSelect.selectedIndex];
+            return option ? option.text.toLowerCase() : "other";
+        }
+
+        function inferGroup() {
+            const text = selectedCode();
+            if (text.includes("فرح") || text.includes("كتب")) return "wedding";
+            if (text.includes("عزاء")) return "condolence";
+            if (text.includes("عقيقة")) return "aqeeqa";
+            if (text.includes("اجتماع")) return "meeting";
+            return "other";
+        }
+
+        function updateOccasionFields() {
+            const group = inferGroup();
+            const isWedding = group === "wedding";
+            weddingOnly.forEach((element) => element.classList.toggle("hidden", !isWedding));
+            title.textContent = titles[group] || "بيانات المناسبة";
+
+            if (group === "condolence") {
+                labels.primaryName.textContent = "اسم المتوفي";
+                labels.primaryId.textContent = "الرقم القومي للمتوفي";
+                labels.primaryAddress.textContent = "العنوان";
+            } else if (isWedding) {
+                labels.primaryName.textContent = "اسم العريس";
+                labels.primaryId.textContent = "الرقم القومي للعريس";
+                labels.primaryAddress.textContent = "عنوان العريس";
+            } else {
+                labels.primaryName.textContent = "اسم صاحب المناسبة";
+                labels.primaryId.textContent = "الرقم القومي";
+                labels.primaryAddress.textContent = "العنوان أو الجهة";
+            }
+        }
+
+        if (occasionSelect) {
+            occasionSelect.addEventListener("change", updateOccasionFields);
+            updateOccasionFields();
+        }
+    })();
+</script>
+{% endblock %}
