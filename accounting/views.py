@@ -60,12 +60,23 @@ def journal_entry_list(request):
 
 def accounting_determination_list(request):
     determinations = AccountingDetermination.objects.select_related("debit_account", "credit_account").all()
+    process_notes = [
+        ("مقدم حجز", "مدين الخزينة / دائن إيرادات مؤجلة"),
+        ("إثبات إيراد القاعة", "مدين العملاء / دائن إيرادات القاعة"),
+        ("إثبات إيراد الخدمات", "مدين العملاء / دائن إيرادات الخدمات"),
+        ("قبض نقدي", "مدين الخزينة / دائن الحساب المقابل في حركة القبض"),
+        ("صرف نقدي", "مدين الحساب المقابل في حركة الصرف / دائن الخزينة"),
+        ("فاتورة مورد", "مدين مصروف أو تكلفة / دائن الموردين"),
+        ("شراء مخزون", "مدين المخزون / دائن الموردين"),
+        ("استهلاك مخزون", "مدين تكلفة المناسبة / دائن المخزون"),
+    ]
     return render(
         request,
         "accounting/accounting_determination_list.html",
         {
             "page_title": "Accounting Determination",
             "determinations": determinations,
+            "process_notes": process_notes,
         },
     )
 

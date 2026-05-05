@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.db import models
 from django.core.validators import RegexValidator
+from accounting.models import JournalEntry
 from core.models import (
     Hall,
     OccasionType,
@@ -117,6 +119,24 @@ class Booking(models.Model):
     notes = models.TextField(blank=True, verbose_name="ملاحظات")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="وقت الإنشاء")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="آخر تحديث")
+    is_posted = models.BooleanField(default=False, verbose_name="مرحل محاسبيًا")
+    posted_at = models.DateTimeField(null=True, blank=True, verbose_name="وقت الترحيل")
+    posted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="posted_bookings",
+        verbose_name="تم الترحيل بواسطة",
+    )
+    journal_entry = models.ForeignKey(
+        JournalEntry,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="bookings",
+        verbose_name="قيد اليومية",
+    )
 
     groom_name = models.CharField(max_length=100, blank=True, verbose_name="اسم العريس")
     groom_national_id = models.CharField(max_length=20, blank=True, verbose_name="الرقم القومي للعريس")
@@ -131,6 +151,10 @@ class Booking(models.Model):
         verbose_name = "حجز"
         verbose_name_plural = "الحجوزات"
         ordering = ["-occasion_date"]
+        permissions = [
+            ("can_confirm_booking", "Can confirm and post booking"),
+            ("can_unpost_booking", "Can reverse posted booking"),
+        ]
 
     def __str__(self):
         return f"حجز #{self.pk} | {self.client.name} | {self.hall} | {self.occasion_date}"

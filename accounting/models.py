@@ -231,6 +231,14 @@ class CashTransaction(models.Model):
     def __str__(self):
         return f"{self.get_transaction_type_display()} - {self.amount} - {self.treasury}"
 
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new and not self.journal_entry_id:
+            from .services import post_cash_transaction
+
+            post_cash_transaction(self)
+
 
 class AccountingDetermination(models.Model):
     class EventType(models.TextChoices):

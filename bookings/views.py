@@ -3,9 +3,12 @@ from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Sum
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 
 from .models import Booking
 from .forms import BOOKING_TIME_CHOICES, EXTRA_TIME_CHOICES, BookingForm, BookingServiceForm
+from .services import confirm_and_post_booking
 from core.models import Hall
 
 from reportlab.lib.pagesizes import A4
@@ -91,6 +94,22 @@ def booking_detail(request, booking_id):
             "page_title": f"حجز رقم {booking.id}",
         },
     )
+
+
+@login_required(login_url="/admin/login/")
+@permission_required("bookings.can_confirm_booking", login_url="/admin/login/", raise_exception=True)
+def booking_confirm(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    if request.method != "POST":
+        return redirect("booking_detail", booking_id=booking.id)
+
+    try:
+        entry = confirm_and_post_booking(booking, request.user)
+    except ValueError as exc:
+        messages.error(request, str(exc))
+    else:
+        messages.success(request, f"تم تأكيد العقد وترحيله إلى قيد يومية رقم {entry.id}.")
+    return redirect("booking_detail", booking_id=booking.id)
 
 
 def booking_calendar(request):

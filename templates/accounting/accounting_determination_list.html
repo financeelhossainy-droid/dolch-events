@@ -14,6 +14,30 @@
     </div>
 </section>
 
+<div class="panel" style="margin-bottom: 18px;">
+    <div class="panel-header">
+        <h2>Finance Process Mapping</h2>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>الحركة</th>
+                    <th>المعالجة المحاسبية</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for process, note in process_notes %}
+                <tr>
+                    <td>{{ process }}</td>
+                    <td>{{ note }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="panel">
     <div class="panel-header">
         <h2>تحديد الحسابات الافتراضية</h2>

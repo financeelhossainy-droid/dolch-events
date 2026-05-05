@@ -54,6 +54,10 @@ class BookingAdmin(admin.ModelAdmin):
         "deposit_amount",
         "created_at",
         "updated_at",
+        "is_posted",
+        "posted_at",
+        "posted_by",
+        "journal_entry",
         "print_pdf_link",
     )
     date_hierarchy = "occasion_date"
@@ -90,6 +94,14 @@ class BookingAdmin(admin.ModelAdmin):
                 "remaining_amount",
                 "deposit_amount",
                 "print_pdf_link",
+            )
+        }),
+        ("الترحيل المحاسبي", {
+            "fields": (
+                "is_posted",
+                "posted_at",
+                "posted_by",
+                "journal_entry",
             )
         }),
         ("ملاحظات", {

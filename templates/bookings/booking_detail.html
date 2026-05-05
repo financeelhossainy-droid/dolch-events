@@ -10,6 +10,14 @@
 {% endblock %}
 
 {% block content %}
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="notice {% if message.tags == 'success' %}success{% endif %}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <div class="finance-strip">
     <div class="finance-item">
         <span>سعر القاعة</span>
@@ -30,6 +38,31 @@
 </div>
 
 <div class="detail-grid" style="margin-top: 18px;">
+    <section class="panel detail-section full">
+        <div class="panel-header" style="padding: 0; border-bottom: 0;">
+            <h2>حالة العقد</h2>
+            {% if not booking.is_posted %}
+            <form method="post" action="{% url 'booking_confirm' booking.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn gold">تأكيد العقد وترحيله</button>
+            </form>
+            {% endif %}
+        </div>
+        {% if booking.is_posted %}
+        <div class="notice success">
+            هذا العقد مرحل محاسبيًا على قيد يومية رقم
+            {% if booking.journal_entry %}
+            <a href="/admin/accounting/journalentry/{{ booking.journal_entry.id }}/change/">{{ booking.journal_entry.id }}</a>
+            {% else %}
+            -
+            {% endif %}
+            {% if booking.posted_at %} بتاريخ {{ booking.posted_at|date:"d / m / Y h:i A" }}{% endif %}
+        </div>
+        {% else %}
+        <div class="notice">العقد محفوظ ولم يتم ترحيله محاسبيًا بعد. استخدم زر التأكيد بعد المراجعة.</div>
+        {% endif %}
+    </section>
+
     <section class="panel detail-section">
         <h2>بيانات العميل والحجز</h2>
         <div class="field-pair"><span>العميل</span><strong>{{ booking.client.name }}</strong></div>
