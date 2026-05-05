@@ -220,6 +220,25 @@ def format_duration_minutes(minutes):
     return " و ".join(parts)
 
 
+def booking_print(request, pk):
+    booking = get_object_or_404(
+        Booking.objects.select_related("client", "hall", "occasion_type"),
+        pk=pk,
+    )
+    services = booking.services.select_related("service").all()
+    return render(
+        request,
+        "bookings/booking_print.html",
+        {
+            "booking": booking,
+            "services": services,
+            "page_title": f"عقد حجز رقم {booking.id}",
+            "duration_label": format_duration_minutes(booking.duration_minutes),
+            "extra_duration_label": format_duration_minutes(booking.extra_minutes),
+        },
+    )
+
+
 def booking_pdf(request, pk):
     booking = get_object_or_404(Booking, pk=pk)
 

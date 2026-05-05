@@ -1,0 +1,319 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>عقد حجز رقم {{ booking.id }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 14mm;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #eef2f6;
+            color: #111827;
+            font-family: Arial, Tahoma, sans-serif;
+            direction: rtl;
+            line-height: 1.7;
+        }
+
+        .toolbar {
+            max-width: 210mm;
+            margin: 18px auto;
+            display: flex;
+            justify-content: flex-start;
+            gap: 8px;
+        }
+
+        .toolbar button,
+        .toolbar a {
+            min-height: 38px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid #cfd7e3;
+            background: #10243d;
+            color: #fff;
+            text-decoration: none;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .toolbar a {
+            background: #fff;
+            color: #10243d;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto 24px;
+            padding: 16mm;
+            background: #fff;
+            border: 1px solid #d8dee7;
+        }
+
+        .header {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            gap: 18px;
+            align-items: center;
+            padding-bottom: 14px;
+            border-bottom: 3px solid #10243d;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        h1,
+        h2,
+        p {
+            margin: 0;
+        }
+
+        h1 {
+            color: #10243d;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            color: #c8a24a;
+            font-size: 16px;
+            margin-top: 4px;
+        }
+
+        .section {
+            margin-top: 18px;
+        }
+
+        .section h2 {
+            font-size: 17px;
+            color: #10243d;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            page-break-inside: avoid;
+        }
+
+        th,
+        td {
+            border: 1px solid #cfd7e3;
+            padding: 8px 10px;
+            vertical-align: top;
+            text-align: right;
+        }
+
+        th {
+            background: #10243d;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .label {
+            width: 20%;
+            background: #eef2f6;
+            font-weight: 700;
+            color: #2b3850;
+        }
+
+        .money th {
+            background: #c8a24a;
+            color: #111827;
+        }
+
+        .conditions {
+            padding-right: 18px;
+            margin: 0;
+        }
+
+        .signatures {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 42px;
+        }
+
+        .signature-line {
+            border-top: 1px solid #111827;
+            padding-top: 8px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .toolbar {
+                display: none;
+            }
+
+            .page {
+                margin: 0;
+                border: 0;
+                width: auto;
+                min-height: auto;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button type="button" onclick="window.print()">طباعة العقد</button>
+        <a href="{% url 'booking_detail' booking.id %}">رجوع لتفاصيل الحجز</a>
+    </div>
+
+    <main class="page">
+        <header class="header">
+            <img class="logo" src="{% static 'logo_farouk.png' %}" alt="الشعار">
+            <div>
+                <h1>عقد حجز قاعة</h1>
+                <p class="subtitle">قاعات مسجد الفاروق</p>
+                <p>رقم العقد: {{ booking.id }}</p>
+            </div>
+        </header>
+
+        <section class="section">
+            <h2>بيانات الحجز</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="label">اسم العميل</td>
+                        <td>{{ booking.client.name }}</td>
+                        <td class="label">رقم الهاتف</td>
+                        <td>{{ booking.client.phone }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">القاعة</td>
+                        <td>{{ booking.hall }}</td>
+                        <td class="label">نوع المناسبة</td>
+                        <td>{{ booking.occasion_type }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">تاريخ الحجز</td>
+                        <td>{{ booking.booking_date|date:"d / m / Y" }}</td>
+                        <td class="label">تاريخ المناسبة</td>
+                        <td>{{ booking.occasion_date|date:"d / m / Y" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">من الساعة</td>
+                        <td>{{ booking.start_time|time:"h:i A" }}</td>
+                        <td class="label">إلى الساعة</td>
+                        <td>{{ booking.end_time|time:"h:i A" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">الوقت الأساسي</td>
+                        <td>{{ booking.get_duration_type_display }}</td>
+                        <td class="label">وقت إضافي</td>
+                        <td>{{ extra_duration_label }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>بيانات المناسبة</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="label">اسم العريس / صاحب المناسبة</td>
+                        <td>{{ booking.groom_name|default:"-" }}</td>
+                        <td class="label">الرقم القومي</td>
+                        <td>{{ booking.groom_national_id|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">العنوان</td>
+                        <td>{{ booking.groom_address|default:"-" }}</td>
+                        <td class="label">اسم العروسة</td>
+                        <td>{{ booking.bride_name|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">الرقم القومي للعروسة</td>
+                        <td>{{ booking.bride_national_id|default:"-" }}</td>
+                        <td class="label">عنوان العروسة</td>
+                        <td>{{ booking.bride_address|default:"-" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>الأوبشنز والخدمات</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>الخدمة</th>
+                        <th>سعر الوحدة</th>
+                        <th>الكمية</th>
+                        <th>الإجمالي</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in services %}
+                    <tr>
+                        <td>{{ item.service }}</td>
+                        <td>{{ item.unit_price|floatformat:2 }} جنيه</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.line_total|floatformat:2 }} جنيه</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">لا توجد خدمات إضافية</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>الملخص المالي</h2>
+            <table class="money">
+                <thead>
+                    <tr>
+                        <th>البند</th>
+                        <th>القيمة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>سعر القاعة</td><td>{{ booking.hall_price|floatformat:2 }} جنيه</td></tr>
+                    <tr><td>إجمالي الخدمات</td><td>{{ booking.services_total|floatformat:2 }} جنيه</td></tr>
+                    <tr><td>إجمالي العقد</td><td>{{ booking.total_price|floatformat:2 }} جنيه</td></tr>
+                    <tr><td>المدفوع</td><td>{{ booking.amount_paid|floatformat:2 }} جنيه</td></tr>
+                    <tr><td>المتبقي</td><td>{{ booking.remaining_amount|floatformat:2 }} جنيه</td></tr>
+                    <tr><td>مقدم الحجز المطلوب</td><td>{{ booking.deposit_amount|floatformat:2 }} جنيه</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>شروط وأحكام الحجز</h2>
+            <ol class="conditions">
+                <li>مقدم الحجز 25% بحد أدنى 3000 جنيه.</li>
+                <li>يتم سداد كامل المبلغ قبل المناسبة بـ 7 أيام.</li>
+                <li>في حالة الإلغاء قبل أكثر من 30 يوم يتم خصم 500 جنيه.</li>
+                <li>في حالة الإلغاء أقل من 30 يوم يتم خصم 25% من قيمة الحجز.</li>
+                <li>في حالة الإلغاء من 15 يوم فأقل يتم خصم 50% من قيمة الحجز.</li>
+                <li>في حالة الإلغاء من أسبوع فأقل يتم خصم 100% من قيمة الحجز.</li>
+            </ol>
+        </section>
+
+        <section class="signatures">
+            <div class="signature-line">توقيع العميل</div>
+            <div class="signature-line">توقيع الإدارة</div>
+        </section>
+    </main>
+</body>
+</html>

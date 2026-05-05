@@ -5,7 +5,7 @@
 {% block topbar_actions %}
 <div class="actions">
     <a class="btn secondary" href="{% url 'booking_list' %}">رجوع</a>
-    <a class="btn gold" href="{% url 'booking_pdf' booking.id %}" target="_blank">طباعة عقد</a>
+    <a class="btn gold" href="{% url 'booking_print' booking.id %}" target="_blank">طباعة عقد</a>
 </div>
 {% endblock %}
 
