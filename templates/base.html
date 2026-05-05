@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{% if request.session.ui_lang == 'en' %}en{% else %}ar{% endif %}" dir="{% if request.session.ui_lang == 'en' %}ltr{% else %}rtl{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,28 +14,25 @@
                 <div class="brand-mark" aria-hidden="true">D</div>
                 <div>
                     <strong>Dolch ERP</strong>
-                    <span>Systems • Applications • Products</span>
+                    <span>{% if request.session.ui_lang == 'en' %}Business Management System{% else %}نظام إدارة الأعمال{% endif %}</span>
                 </div>
             </div>
 
             <nav class="nav-menu" aria-label="القائمة الرئيسية">
-                <a href="{% url 'booking_list' %}" class="nav-link">لوحة الحجوزات</a>
-                <a href="{% url 'booking_create' %}" class="nav-link">حجز جديد</a>
-                <a href="{% url 'booking_calendar' %}" class="nav-link">كاليندر الحجوزات</a>
-                <a href="{% url 'module_hub' %}" class="nav-link">مركز الموديولز</a>
-                <a href="{% url 'accounting_module' %}" class="nav-link">الحسابات</a>
-                <a href="{% url 'master_data' %}" class="nav-link">Master Data</a>
-                <a href="{% url 'accounting_determination_list' %}" class="nav-link">Accounting Determination</a>
-                <a href="{% url 'purchases_module' %}" class="nav-link">المشتريات</a>
-                <a href="{% url 'inventory_module' %}" class="nav-link">المخازن</a>
-                <a href="{% url 'costing_module' %}" class="nav-link">التكاليف</a>
-                <a href="{% url 'reports_module' %}" class="nav-link">التقارير</a>
+                <a href="{% url 'module_hub' %}" class="nav-link">{% if request.session.ui_lang == 'en' %}Work Center{% else %}مركز العمل{% endif %}</a>
+                <a href="{% url 'bookings_workspace' %}" class="nav-link">{% if request.session.ui_lang == 'en' %}Bookings{% else %}الحجوزات{% endif %}</a>
+                <a href="{% url 'accounting_module' %}" class="nav-link">{% if request.session.ui_lang == 'en' %}Accounting{% else %}الحسابات{% endif %}</a>
+                <a href="{% url 'purchases_module' %}" class="nav-link">{% if request.session.ui_lang == 'en' %}Purchasing{% else %}المشتريات{% endif %}</a>
+                <a href="{% url 'inventory_module' %}" class="nav-link">{% if request.session.ui_lang == 'en' %}Inventory{% else %}المخازن{% endif %}</a>
+                <a href="{% url 'costing_module' %}" class="nav-link">{% if request.session.ui_lang == 'en' %}Costing{% else %}التكاليف{% endif %}</a>
+                <a href="{% url 'reports_module' %}" class="nav-link">{% if request.session.ui_lang == 'en' %}Reports{% else %}التقارير{% endif %}</a>
+                <a href="{% url 'configuration_module' %}" class="nav-link">{% if request.session.ui_lang == 'en' %}Configuration{% else %}الإعدادات{% endif %}</a>
             </nav>
 
             <div class="sidebar-section">
-                <span class="section-title">إعدادات متقدمة</span>
+                <span class="section-title">{% if request.session.ui_lang == 'en' %}Advanced{% else %}متقدم{% endif %}</span>
                 <a href="/admin/">Django Admin</a>
-                <span>إدارة الجداول الخام والصلاحيات</span>
+                <span>{% if request.session.ui_lang == 'en' %}Raw tables and permissions{% else %}إدارة الجداول الخام والصلاحيات{% endif %}</span>
             </div>
         </aside>
 
@@ -43,9 +40,14 @@
             <header class="topbar">
                 <div>
                     <span class="eyebrow">Dolch Events ERP</span>
-                    <h1>{% block page_heading %}{{ page_title|default:"لوحة التحكم" }}{% endblock %}</h1>
+                    <h1>{% block page_heading %}{{ page_title|default:"Work Center" }}{% endblock %}</h1>
                 </div>
                 <div class="topbar-actions">
+                    {% if request.session.ui_lang == 'en' %}
+                    <a class="btn secondary" href="{% url 'switch_language' 'ar' %}">عربي</a>
+                    {% else %}
+                    <a class="btn secondary" href="{% url 'switch_language' 'en' %}">English</a>
+                    {% endif %}
                     {% block topbar_actions %}{% endblock %}
                 </div>
             </header>

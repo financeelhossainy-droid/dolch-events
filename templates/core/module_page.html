@@ -3,7 +3,7 @@
 {% block title %}{{ module.title }} | Dolch Events{% endblock %}
 
 {% block topbar_actions %}
-<a class="btn secondary" href="{% url 'booking_list' %}">لوحة الحجوزات</a>
+<a class="btn secondary" href="{% url 'module_hub' %}">{% if request.session.ui_lang == 'en' %}All Apps{% else %}كل التطبيقات{% endif %}</a>
 {% endblock %}
 
 {% block content %}
@@ -22,9 +22,9 @@
             <p>{{ description }}</p>
         </div>
         {% if route_name %}
-            <a class="btn secondary" href="{% url route_name %}">فتح</a>
+            <a class="btn secondary" href="{% url route_name %}">{% if request.session.ui_lang == 'en' %}Open{% else %}فتح{% endif %}</a>
         {% else %}
-            <span class="module-status">قيد التجهيز</span>
+            <span class="module-status">{% if request.session.ui_lang == 'en' %}In progress{% else %}قيد التجهيز{% endif %}</span>
         {% endif %}
     </article>
     {% endfor %}

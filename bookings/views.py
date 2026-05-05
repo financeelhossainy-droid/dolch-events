@@ -240,6 +240,8 @@ def booking_print(request, pk):
 
 
 def booking_pdf(request, pk):
+    return redirect("booking_print", pk=pk)
+
     booking = get_object_or_404(Booking, pk=pk)
 
     response = HttpResponse(content_type="application/pdf")

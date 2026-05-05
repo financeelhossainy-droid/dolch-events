@@ -19,7 +19,7 @@ from django.shortcuts import redirect
 from django.urls import path, include
 
 urlpatterns = [
-    path("", lambda request: redirect("booking_list"), name="dashboard"),
+    path("", lambda request: redirect("module_hub"), name="dashboard"),
     path("admin/", admin.site.urls),
     path("", include("core.urls")),
     path("accounting/", include("accounting.urls")),
