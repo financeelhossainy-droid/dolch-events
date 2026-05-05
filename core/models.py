@@ -61,12 +61,13 @@ class MainServicePrice(models.Model):
     class DurationType(models.TextChoices):
         ONE_HOUR  = "1h", "ساعة"
         TWO_HOURS = "2h", "ساعتان"
+        PHOTO_VIDEO_ZAFFA_OFFER = "photo_video_zaffa_offer", "عرض فوتو + فيديو + زفة"
         NONE      = "na", "غير مرتبط بمدة"
 
     hall          = models.ForeignKey(Hall, on_delete=models.PROTECT, verbose_name="القاعة", related_name="prices")
     occasion_type = models.ForeignKey(OccasionType, on_delete=models.PROTECT, verbose_name="نوع المناسبة", related_name="prices")
     duration_type = models.CharField(
-        max_length=5,
+        max_length=30,
         choices=DurationType.choices,
         default=DurationType.NONE,
         verbose_name="المدة"

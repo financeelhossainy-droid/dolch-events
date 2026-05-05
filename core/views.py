@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 MODULES = {
     "modules": {
@@ -86,7 +86,7 @@ def accounting_module(request):
 
 
 def calendar_module(request):
-    return render(request, "core/module_page.html", {"page_title": MODULES["calendar"]["title"], "module": MODULES["calendar"]})
+    return redirect("booking_calendar")
 
 
 def purchases_module(request):

@@ -28,8 +28,8 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(MainServicePrice)
 class MainServicePriceAdmin(admin.ModelAdmin):
-    list_display  = ("hall", "occasion_type", "price", "is_active")
-    list_filter   = ("hall", "occasion_type", "is_active")
+    list_display  = ("hall", "occasion_type", "duration_type", "price", "is_active")
+    list_filter   = ("hall", "occasion_type", "duration_type", "is_active")
     search_fields = ("hall__name", "occasion_type__name")
 
 

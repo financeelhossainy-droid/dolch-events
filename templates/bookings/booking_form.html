@@ -14,7 +14,8 @@
     <div class="form-grid">
         <section class="form-section">
             <h2>بيانات العميل</h2>
-            {% include "bookings/partials/form_field.html" with field=form.client %}
+            {% include "bookings/partials/form_field.html" with field=form.client_name %}
+            {% include "bookings/partials/form_field.html" with field=form.client_phone %}
         </section>
 
         <section class="form-section">
@@ -24,6 +25,9 @@
             {% include "bookings/partials/form_field.html" with field=form.duration_type %}
             {% include "bookings/partials/form_field.html" with field=form.booking_date %}
             {% include "bookings/partials/form_field.html" with field=form.occasion_date %}
+            {% include "bookings/partials/form_field.html" with field=form.start_time %}
+            {% include "bookings/partials/form_field.html" with field=form.extra_minutes %}
+            <p class="form-hint">الأوبشنز مثل العصير، الأكل، فوتو، فيديو، وزفة يتم إضافتها من صفحة تفاصيل الحجز بعد حفظ الحجز.</p>
         </section>
 
         <section class="form-section full">

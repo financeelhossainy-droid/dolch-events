@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}كاليندر الحجوزات | Dolch ERP{% endblock %}
+
+{% block topbar_actions %}
+<a class="btn gold" href="{% url 'booking_create' %}">حجز جديد</a>
+{% endblock %}
+
+{% block content %}
+<form method="get" class="panel filter-panel">
+    <div class="form-grid">
+        <div class="field-group">
+            <label for="date">تاريخ البحث</label>
+            <input type="date" id="date" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+        </div>
+        <div class="field-group">
+            <label for="hall">القاعة</label>
+            <select id="hall" name="hall">
+                <option value="">كل القاعات</option>
+                {% for hall in halls %}
+                <option value="{{ hall.id }}" {% if selected_hall_id == hall.id %}selected{% endif %}>{{ hall }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field-group">
+            <label for="start_time">من الساعة</label>
+            <select id="start_time" name="start_time">
+                {% for value, label in time_choices %}
+                <option value="{{ value }}" {% if selected_time == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field-group">
+            <label for="duration_type">الوقت الأساسي</label>
+            <select id="duration_type" name="duration_type">
+                {% for value, label in duration_choices %}
+                <option value="{{ value }}" {% if selected_duration == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field-group">
+            <label for="extra_minutes">وقت إضافي</label>
+            <select id="extra_minutes" name="extra_minutes">
+                {% for value, label in extra_time_choices %}
+                <option value="{{ value }}" {% if selected_extra_minutes == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="panel-header">
+        <div></div>
+        <button type="submit">بحث عن المواعيد</button>
+    </div>
+</form>
+
+<div class="calendar-layout">
+    <section class="calendar-grid">
+        {% for day in calendar_days %}
+        <article class="calendar-day {% if day.is_selected %}selected{% endif %}">
+            <header>
+                <strong>{{ day.date|date:"d / m" }}</strong>
+                <span>{{ day.date|date:"l" }}</span>
+            </header>
+            <div class="calendar-events">
+                {% for booking in day.bookings %}
+                <a class="calendar-event status-{{ booking.status }}" href="{% url 'booking_detail' booking.id %}">
+                    <strong>{{ booking.client.name }}</strong>
+                    <span>{{ booking.start_time|time:"h:i A" }} - {{ booking.end_time|time:"h:i A" }} | {{ booking.hall }} - {{ booking.occasion_type }}</span>
+                </a>
+                {% empty %}
+                <span class="empty-slot">لا توجد حجوزات</span>
+                {% endfor %}
+            </div>
+        </article>
+        {% endfor %}
+    </section>
+
+    <aside class="panel availability-panel">
+        <div class="panel-header">
+            <h2>إتاحة يوم {{ selected_date|date:"d / m / Y" }}</h2>
+        </div>
+        <div class="availability-query">من {{ selected_time }} إلى {{ selected_end_time|time:"h:i A" }}</div>
+        <div class="availability-list">
+            {% for hall in available_halls %}
+            <div class="availability-item available">
+                <strong>{{ hall }}</strong>
+                <span>متاحة</span>
+            </div>
+            {% empty %}
+            <div class="availability-item busy">
+                <strong>لا توجد قاعات متاحة</strong>
+                <span>كل القاعات عليها حجوزات في هذا اليوم</span>
+            </div>
+            {% endfor %}
+        </div>
+    </aside>
+</div>
+
+<div class="panel" style="margin-top: 18px;">
+    <div class="panel-header">
+        <h2>حجوزات اليوم المحدد</h2>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>رقم</th>
+                    <th>العميل</th>
+                    <th>القاعة</th>
+                    <th>المناسبة</th>
+                    <th>من</th>
+                    <th>إلى</th>
+                    <th>الوقت الأساسي</th>
+                    <th>إضافي</th>
+                    <th>الحالة</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in selected_day_bookings %}
+                <tr>
+                    <td>#{{ booking.id }}</td>
+                    <td>{{ booking.client.name }}</td>
+                    <td>{{ booking.hall }}</td>
+                    <td>{{ booking.occasion_type }}</td>
+                    <td>{{ booking.start_time|time:"h:i A" }}</td>
+                    <td>{{ booking.end_time|time:"h:i A" }}</td>
+                    <td>{{ booking.get_duration_type_display }}</td>
+                    <td>{{ booking.extra_minutes }} دقيقة</td>
+                    <td><span class="badge {{ booking.status }}">{{ booking.get_status_display }}</span></td>
+                    <td>
+                        <div class="actions">
+                            <a class="btn secondary" href="{% url 'booking_detail' booking.id %}">تفاصيل</a>
+                            <a class="btn" href="{% url 'booking_pdf' booking.id %}" target="_blank">طباعة</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10">لا توجد حجوزات في اليوم المحدد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

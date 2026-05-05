@@ -42,6 +42,9 @@
                     <th>القاعة</th>
                     <th>المناسبة</th>
                     <th>تاريخ المناسبة</th>
+                    <th>من</th>
+                    <th>إلى</th>
+                    <th>الوقت الأساسي</th>
                     <th>الحالة</th>
                     <th>الإجمالي</th>
                     <th>المتبقي</th>
@@ -57,6 +60,9 @@
                     <td>{{ booking.hall }}</td>
                     <td>{{ booking.occasion_type }}</td>
                     <td>{{ booking.occasion_date|date:"d / m / Y" }}</td>
+                    <td>{{ booking.start_time|time:"h:i A" }}</td>
+                    <td>{{ booking.end_time|time:"h:i A" }}</td>
+                    <td>{{ booking.get_duration_type_display }}</td>
                     <td><span class="badge {{ booking.status }}">{{ booking.get_status_display }}</span></td>
                     <td>{{ booking.total_price|floatformat:2 }} جنيه</td>
                     <td>{{ booking.remaining_amount|floatformat:2 }} جنيه</td>

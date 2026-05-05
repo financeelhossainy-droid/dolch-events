@@ -36,10 +36,13 @@
         <div class="field-pair"><span>الهاتف</span><strong>{{ booking.client.phone }}</strong></div>
         <div class="field-pair"><span>القاعة</span><strong>{{ booking.hall }}</strong></div>
         <div class="field-pair"><span>نوع المناسبة</span><strong>{{ booking.occasion_type }}</strong></div>
-        <div class="field-pair"><span>المدة</span><strong>{{ booking.get_duration_type_display }}</strong></div>
+        <div class="field-pair"><span>الوقت الأساسي</span><strong>{{ booking.get_duration_type_display }}</strong></div>
+        <div class="field-pair"><span>وقت إضافي</span><strong>{{ booking.extra_minutes }} دقيقة</strong></div>
         <div class="field-pair"><span>الحالة</span><strong class="status-{{ booking.status }}">{{ booking.get_status_display }}</strong></div>
         <div class="field-pair"><span>تاريخ الحجز</span><strong>{{ booking.booking_date|date:"d / m / Y" }}</strong></div>
         <div class="field-pair"><span>تاريخ المناسبة</span><strong>{{ booking.occasion_date|date:"d / m / Y" }}</strong></div>
+        <div class="field-pair"><span>من الساعة</span><strong>{{ booking.start_time|time:"h:i A" }}</strong></div>
+        <div class="field-pair"><span>إلى الساعة</span><strong>{{ booking.end_time|time:"h:i A" }}</strong></div>
     </section>
 
     <section class="panel detail-section">
@@ -54,13 +57,20 @@
 
     <section class="panel detail-section full">
         <div class="panel-header" style="padding: 0 0 14px; border-bottom: 0;">
-            <h2>الخدمات المضافة</h2>
+            <h2>الأوبشنز والخدمات الإضافية</h2>
+            <a class="btn secondary" href="/admin/core/service/">إدارة قائمة الأوبشنز</a>
         </div>
+        {% if booking.has_photo_video_zaffa_bundle %}
+        <div class="notice success">هذا الحجز مؤهل لعرض ساعة ونصف هدية بسبب إضافة فوتو + فيديو + زفة.</div>
+        {% endif %}
+        {% if booking.duration_type == "photo_video_zaffa_offer" %}
+        <div class="notice success">العرض محسوب تلقائيًا: إيجار ساعة + سعر الفوتو + سعر الفيديو + سعر الزفة، والوقت الأساسي ساعة ونصف، وأي وقت إضافي يتحسب بنسبة سعر الساعة.</div>
+        {% endif %}
         <div class="table-scroll">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>الخدمة</th>
+                        <th>الأوبشن / الخدمة</th>
                         <th>سعر الوحدة</th>
                         <th>الكمية</th>
                         <th>الإجمالي</th>
@@ -78,7 +88,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5">لا توجد خدمات مضافة</td>
+                        <td colspan="5">لا توجد أوبشنز مضافة بعد. استخدم نموذج إضافة الأوبشنز أسفل الصفحة.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -87,7 +97,7 @@
     </section>
 
     <section class="panel detail-section">
-        <h2>إضافة خدمة</h2>
+        <h2>إضافة أوبشن للحجز</h2>
         <form method="post">
             {% csrf_token %}
             {% include "bookings/partials/form_field.html" with field=service_form.service %}
